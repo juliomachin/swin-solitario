@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -57,12 +58,11 @@ public class MainWindow implements ActionListener{
 		SpringLayout springLayout = new SpringLayout();
 		ventana.getContentPane().setLayout(springLayout);
 
-		Image icon = new ImageIcon(getClass().getResource("/imagen/descarga.jpeg")).getImage();
+		Image icon = new ImageIcon(getClass().getResource("/imagen/icon.jpeg")).getImage();
 		ventana.setIconImage(icon);
 
 
-		JMenu menu_archivo , menu_editar, menu_historial;
-		JButton menu_ayuda;
+		JMenu menu_archivo , menu_editar, menu_historial, menu_ayuda;
 
 		//Item Archivo
 		JMenu item_nuevo = new JMenu("Nuevo... ");
@@ -89,8 +89,8 @@ public class MainWindow implements ActionListener{
 		JMenuItem item_resolver = new JMenuItem("Resolver");
 
 		//Item Historial
-		JMenuItem item_estadistica = new JMenuItem("Deshacer");
-		JMenuItem item_ficheroEstadistica = new JMenuItem("Rehacer");
+		JMenuItem item_estadistica = new JMenuItem("Estadisticas");
+		JMenuItem item_ficheroEstadistica = new JMenuItem("Ficheros Estadisticas");
 
 
 		JMenuBar subMenu = new JMenuBar();
@@ -98,7 +98,7 @@ public class MainWindow implements ActionListener{
 		menu_archivo = new JMenu("Archivo");
 		menu_editar = new JMenu("Editar");
 		menu_historial = new JMenu("Historial");
-		menu_ayuda = new JButton("Ayuda");
+		menu_ayuda = new JMenu("Ayuda");
 		menu_ayuda.setBorder(null);
 		menu_ayuda.setFocusable(true);
 		menu_ayuda.addActionListener(new ActionListener() {
@@ -137,22 +137,25 @@ public class MainWindow implements ActionListener{
 		menu_historial.add(item_ficheroEstadistica);
 
 
-		//		JMenuItem item_ayuda =  new JMenuItem("Informacion");
-		//		menu_ayuda.add(item_ayuda);
-		//		item_guardar.addActionListener(new ActionListener() {
-		//			public void actionPerformed(ActionEvent e) {
-		//				ayuda();
-		//			}
-		//		});
+		JMenuItem item_ayuda =  new JMenuItem("Informacion");
+		menu_ayuda.add(item_ayuda);
+		item_guardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ayuda();
+			}
+		});
 
 
+		//Image fondo = new ImageIcon(getClass().getResource("/imagen/fondo.jpg")).getImage();
 
+		
 		JPanel panel = new JPanel();
 		springLayout.putConstraint(SpringLayout.NORTH, panel, 10, SpringLayout.NORTH, ventana.getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, panel, 10, SpringLayout.WEST, ventana.getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, panel, -10, SpringLayout.SOUTH, ventana.getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, panel, -10, SpringLayout.EAST, ventana.getContentPane());
-		panel.setBackground(Color.green);
+		JLabel fondo = new JLabel(new ImageIcon("/imagen/fondo.jpg"));
+		panel.add(fondo);
 		ventana.getContentPane().add(panel);
 		ventana.setSize(798,524);
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -192,7 +195,11 @@ public class MainWindow implements ActionListener{
 
 	public static void ayuda() {
 
-		JOptionPane.showMessageDialog(null, "Resuelve el progama ", "Ayuda", 0);
+		JOptionPane.showMessageDialog(null, "Resuelve el progama ", "Ayuda", JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	
+
+	
+	
 }

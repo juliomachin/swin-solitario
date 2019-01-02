@@ -1,42 +1,53 @@
 package controller;
 
-import java.awt.Color;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
+
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class MainWindow implements ActionListener{
-	public  JFrame ventana;
+import com.sun.prism.paint.Color;
 
+@SuppressWarnings("serial")
+public class Frances extends JFrame{
+
+	private Baraja baraja = new Baraja(false);
+	
 	public static void main(String[] args) {
-
 		try {
 			javax.swing.UIManager.setLookAndFeel( "javax.swing.plaf.nimbus.NimbusLookAndFeel" );
-		} catch (Exception e) {
-
-		}
+		} catch (Exception e) {}
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainWindow n = new MainWindow();
-					n.ventana.setVisible(true);
+					Frances n = new Frances();
+					n.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -45,29 +56,65 @@ public class MainWindow implements ActionListener{
 
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+	public Frances() {
+		setTitle("Solitario Frances");
+		setFont(new Font("Goudy Stout", Font.BOLD, 12));
+		setResizable(false);
+		
+		Image scaled = new ImageIcon(getClass().getResource("/imagen/fondo.jpg")).getImage().getScaledInstance(1024, 768, Image.SCALE_SMOOTH);
+		
+		JPanel fondo = new JPanel() {
+			private static final long serialVersionUID = 1L;
 
-	}
+			@Override protected void paintComponent(Graphics g)
+			{
+				super.paintComponent(g);
+				g.drawImage(scaled, 0, 0, this);
+			}
+		};
+		setContentPane(fondo);
 
-	public MainWindow() {
-		ventana = new JFrame("Solitario");
-		ventana.setFont(new Font("Goudy Stout", Font.BOLD, 12));
-		ventana.getContentPane().setBackground(new Color(255, 255, 255));
 		SpringLayout springLayout = new SpringLayout();
-		ventana.getContentPane().setLayout(springLayout);
+		getContentPane().setLayout(new BorderLayout());
+		
+		
+		
+		JLayeredPane pila4 = new JLayeredPane();
+		pila4.setSize(new Dimension(500, 400));
+		
+		Point punto = new Point(15,30);
+		for (int i = 0; i < 3; i++) {
+			Carta pedida = baraja.pedirCarta();
+			pedida.setIcon(new ImageIcon(getClass().getResource("/imagen/reverse.png")));
+			pedida.setBounds(punto.x, punto.y, pedida.getWidth(), pedida.getHeight());
+			
+			punto.x += 3;
+			punto.y += 3;
+			
+			pila4.add(pedida, 0);
+		}
+		
+		getContentPane().add(pila4, BorderLayout.CENTER);
 
 		Image icon = new ImageIcon(getClass().getResource("/imagen/icon.jpeg")).getImage();
-		ventana.setIconImage(icon);
-
+		setIconImage(icon);
 
 		JMenu menu_archivo , menu_editar, menu_historial, menu_ayuda;
 
 		//Item Archivo
 		JMenu item_nuevo = new JMenu("Nuevo... ");
-		JMenuItem solitario = new JMenuItem("Solitario ");
+		JMenuItem solitario = new JMenuItem("Solitario Frances");
+		solitario.addActionListener(e -> {
+			Frances n = new Frances();
+			n.setVisible(true);
+		});
+
 		JMenuItem solitario_saltos = new JMenuItem("Solitario Saltos");
+		solitario_saltos.addActionListener(e -> {
+			Saltos n = new Saltos();
+			n.setVisible(true);
+		});
+
 		JMenuItem item_cargar = new JMenuItem("Cargar... ");
 		JMenuItem item_guardar = new JMenuItem("Guardar...");
 		item_guardar.addActionListener(new ActionListener() {
@@ -106,7 +153,7 @@ public class MainWindow implements ActionListener{
 				ayuda();
 			}
 		});
-		ventana.setJMenuBar(subMenu);
+		setJMenuBar(subMenu);
 		subMenu.add(menu_archivo);
 		subMenu.add(menu_editar);
 		subMenu.add(menu_historial);
@@ -145,25 +192,11 @@ public class MainWindow implements ActionListener{
 			}
 		});
 
-
-		//Image fondo = new ImageIcon(getClass().getResource("/imagen/fondo.jpg")).getImage();
-
-		
-		JPanel panel = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel, 10, SpringLayout.NORTH, ventana.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, panel, 10, SpringLayout.WEST, ventana.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, panel, -10, SpringLayout.SOUTH, ventana.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, panel, -10, SpringLayout.EAST, ventana.getContentPane());
-		JLabel fondo = new JLabel(new ImageIcon("/imagen/fondo.jpg"));
-		panel.add(fondo);
-		ventana.getContentPane().add(panel);
-		ventana.setSize(798,524);
-		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		setSize(1024, 768);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
-	public static void guardar(){
-
+	public void guardar(){
 		//To-Do
 		String name = new String();
 		JFileChooser fc = new JFileChooser();
@@ -185,21 +218,71 @@ public class MainWindow implements ActionListener{
 		}
 	}
 
+	public void cargar() {
+
+		JFileChooser fc = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "txt", "text");
+		fc.setFileFilter(filter);
+		File archivo;
 
 
-	public static void cargar() {
+		try {
+			if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+				archivo = fc.getSelectedFile();
+				FileReader fr;
 
-		//To-Do
+				fr = new FileReader(archivo.toString());
+
+				BufferedReader reader = new BufferedReader(fr);
+
+				int ancho = -1;
+				String linea;
+				ArrayList<int[]> lineas = new ArrayList<int[]>();
+				while((linea=reader.readLine())!=null) {
+					if(ancho == -1){ // PRIMERA LINEA DEL DOCUMENTO
+						String[] cortes = linea.split("\\s+");
+						ancho = cortes.length;
+						int[] vector = new int[cortes.length];
+						for (int i = 0; i < cortes.length; i++) {
+							vector[i] = Integer.parseInt(cortes[i]);
+
+							if(vector[i] != 0 && vector[i] != 1){
+								throw new Exception();
+							}
+						}
+
+						lineas.add(vector);
+					} else { // RESTO DE LINEAS DE LA MATRIZ
+						String[] cortes = linea.split("\\s+");
+						if(cortes.length != ancho)
+							throw new Exception();
+
+						int[] vector = new int[cortes.length];
+						for (int i = 0; i < cortes.length; i++) {
+							vector[i] = Integer.parseInt(cortes[i]);
+
+							if(vector[i] != 0 && vector[i] != 1){
+								throw new Exception();
+							}
+						}
+
+						lineas.add(vector);
+					}
+				}
+
+				reader.close();
+
+
+			}
+		}catch(Exception event) {
+			JOptionPane.showMessageDialog(null,"No es una partida valida.","Error",JOptionPane.ERROR_MESSAGE);
+		}
+
 
 	}
 
-	public static void ayuda() {
-
+	public void ayuda() {
 		JOptionPane.showMessageDialog(null, "Resuelve el progama ", "Ayuda", JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	
-
-	
-	
 }

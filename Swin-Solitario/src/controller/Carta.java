@@ -1,13 +1,19 @@
 package controller;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
+
 import javax.swing.JButton;
 
+@SuppressWarnings("serial")
 public class Carta extends JButton{
 	
 	private String palo;
 	private String numero;
+	private boolean oculta = false;
 	
-	public Carta(String palo, String numero) {
+	public Carta(String numero, String palo) {
+		setSize(new Dimension(75, 98));
 		this.palo = palo;
 		this.numero = numero;
 	}

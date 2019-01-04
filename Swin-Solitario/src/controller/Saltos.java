@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -13,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
-public class Saltos extends JFrame{
+public class Saltos extends JFrame implements ActionListener {
 	
 	public Saltos() {
 		
@@ -32,6 +34,11 @@ public class Saltos extends JFrame{
         getContentPane().setLayout(new FlowLayout());
 		setSize(798,524);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
 		
 	}
 

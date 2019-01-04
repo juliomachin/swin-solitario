@@ -1,8 +1,6 @@
 package controller;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
-
 import javax.swing.JButton;
 
 @SuppressWarnings("serial")
@@ -13,6 +11,7 @@ public class Carta extends JButton{
 	private boolean oculta = false;
 	
 	public Carta(String numero, String palo) {
+		super();
 		setSize(new Dimension(75, 98));
 		this.palo = palo;
 		this.numero = numero;
@@ -41,6 +40,14 @@ public class Carta extends JButton{
 	@Override
 	public String toString() {
 		return  "[" + palo +""+ numero + "]";
+	}
+
+	public boolean isOculta() {
+		return oculta;
+	}
+
+	public void setOculta(boolean oculta) {
+		this.oculta = oculta;
 	}
 	
 }

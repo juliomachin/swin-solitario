@@ -49,5 +49,17 @@ public class Carta extends JButton{
 	public void setOculta(boolean oculta) {
 		this.oculta = oculta;
 	}
+
+	/**
+	 * @return
+	 * true: negra
+	 * false roja
+	 */
+	public boolean getColor() {
+		if(this.getPalo().equals("S") || this.getPalo().equals("C"))
+			return true;
+		else
+			return false;
+	}
 	
 }

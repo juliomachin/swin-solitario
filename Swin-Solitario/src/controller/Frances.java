@@ -35,6 +35,8 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 	private ArrayList<JLayeredPane> superiores = new ArrayList<JLayeredPane>();
 	private ArrayList<JLayeredPane> inferiores = new ArrayList<JLayeredPane>();
 
+	JLayeredPane sacadas;
+	
 	public static void main(String[] args) {
 		try {
 			javax.swing.UIManager.setLookAndFeel( "javax.swing.plaf.nimbus.NimbusLookAndFeel" );
@@ -277,7 +279,7 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 
 		Point p = new Point(15,30);
 
-		JLayeredPane sacadas = new JLayeredPane();
+		sacadas = new JLayeredPane();
 		sacadas.setSize(new Dimension(140, 459));
 		sacadas.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		sacadas.setBounds(146, 0, 140, 250);
@@ -287,6 +289,7 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 		mazo.setBounds(15, 30, mazo.getWidth(), mazo.getHeight());
 		mazo.setBackground(Color.WHITE);
 		bar.add(mazo, 0);
+		//Add baraja a sacadas
 		mazo.addActionListener(e -> {
 			if(baraja.size() > 0) {
 				Carta pedida = baraja.pedirCarta();
@@ -419,10 +422,15 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 				File aux = new File(fc.getSelectedFile().getAbsolutePath() + "/"  + name + ".txt");
 				FileWriter fw =  new FileWriter(aux);
 
-				fw.write("Solitario clásico");
+				fw.write("Solitario clasico");
 				fw.write("\n");
 				//Mazo
-				//fw.write();
+				for (int j = 0; j < superiores.size(); j++) {
+					//fw.write(superiores.get(j).getComponent(j));
+
+				}
+				
+
 				//Sacadas
 				//fw.write("\n")
 

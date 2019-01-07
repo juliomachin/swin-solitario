@@ -6,12 +6,15 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -21,8 +24,11 @@ import javax.swing.SpringLayout;
 @SuppressWarnings("serial")
 public class Saltos extends JFrame implements ActionListener {
 	
+	private Baraja baraja = new Baraja(false);
+	private ArrayList<JLayeredPane> pilas = new ArrayList<JLayeredPane>();
+	
 	public Saltos() {
-		
+		baraja.setControladorEsp(this);
 		setTitle("Solitario Saltos");
 		setFont(new Font("Goudy Stout", Font.BOLD, 12));
 		JPanel fondo = new JPanel();
@@ -30,6 +36,23 @@ public class Saltos extends JFrame implements ActionListener {
 		setContentPane(fondo);
 
 		getContentPane().setLayout(null);
+		
+		//Pilas
+		Point punto = new Point(15,30);
+		for (int i = 0; i < baraja.size(); i++) {
+			for (int j = 0; j < 1; j++) {
+				Carta pedida = baraja.pedirCarta();
+				pedida.setBounds(punto.x, punto.y, pedida.getWidth(), pedida.getHeight());
+
+				punto.y += 15;
+
+				pilas.get(i).add(pedida, 0);
+				getContentPane().add(pilas.get(i));
+				pilas.add(pilas.get(i));
+			}
+
+			//getContentPane().add(pilas.get(i));
+		}
 
 		Image icon = new ImageIcon(getClass().getResource("/imagen_española/icono_espanola.jpg")).getImage();
 		setIconImage(icon);

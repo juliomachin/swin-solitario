@@ -3,7 +3,6 @@ package controller;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Point;
@@ -293,16 +292,16 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 				Carta pedida = baraja.pedirCarta();
 				pedida.setBounds(p.x, p.y, mazo.getWidth(), mazo.getHeight());
 				sacadas.add(pedida,0);
-				
+
 				if(baraja.size() == 0)
 					mazo.setBackground(Color.RED);
 			} else {
 				mazo.setBackground(Color.WHITE);
-				
+
 				for (int i = 0; i < sacadas.getComponentCount(); i++) {
 					baraja.addCarta( (Carta)sacadas.getComponents()[i] );
 				}
-				
+
 				sacadas.removeAll();
 			}
 			repaint();
@@ -420,7 +419,7 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 				File aux = new File(fc.getSelectedFile().getAbsolutePath() + "/"  + name + ".txt");
 				FileWriter fw =  new FileWriter(aux);
 
-				fw.write("Solitario clÃ¡sico");
+				fw.write("Solitario clásico");
 				fw.write("\n");
 				//Mazo
 				//fw.write();
@@ -484,21 +483,41 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 			if(anterior == null)
 				anterior = selected;
 			else {
-				if(emparejan(anterior, selected)) {
-					anterior.setBounds(selected.getBounds().x, selected.getBounds().y+15, anterior.getWidth(), anterior.getHeight());
-
+				if(emparejan(anterior, selected) && anterior.getParent() != selected.getParent()) {
 					//destapa la carta anterior
 					JLayeredPane padre = ((JLayeredPane)anterior.getParent());
 					if(padre.getComponentCount() > 1) {
 						for (int i = 0; i < padre.getComponentCount(); i++) {
-							if(padre.getComponents()[i] == anterior) {
-								padre.getComponents()[i+1].setEnabled(true);
+							try{
+								if(padre.getComponents()[i] == anterior) {
+									padre.getComponents()[i+1].setEnabled(true);
+								}
+							} catch (IndexOutOfBoundsException ex) {
+								System.out.println(ex.getMessage());
 							}
 						}
 					}
+					int cantidad = 0 ;
 
-					((JLayeredPane)anterior.getParent()).remove(anterior);
-					((JLayeredPane)selected.getParent()).add(anterior,0);
+					for (int i = 0; i <padre.getComponentCount(); i++) {
+						if(padre.getComponents()[i] == anterior) {
+							cantidad = (padre.getComponentCount() - (padre.getComponentCount() - i))+1;
+						}
+					}
+					Carta [] cartas = new Carta[cantidad];
+					for (int i = 0; i < cartas.length; i++) {
+						cartas[i] = (Carta)padre.getComponents()[i];
+					}
+
+					Point punto = new Point(selected.getBounds().x, selected.getBounds().y+15);
+					for (int i = cartas.length-1; i >= 0; i--) {
+						Carta carta = cartas[i];
+						padre.remove(carta);
+						carta.setBounds(punto.x, punto.y, anterior.getWidth(), anterior.getHeight());
+						((JLayeredPane)selected.getParent()).add(carta,0);
+
+						punto.y += 15;
+					}
 					repaint();
 				}
 
@@ -567,7 +586,7 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 					Carta n = anterior;
 					n.addActionListener(event -> {
 						if(anterior != null)
-							if(emparejanReves(anterior,n)) {
+							if(emparejanReves(anterior,n) && anterior.getParent() != n.getParent()) {
 								anterior.setBounds(n.getBounds().x, n.getBounds().y+15, anterior.getWidth(), anterior.getHeight());
 								((JLayeredPane)anterior.getParent()).remove(anterior);
 								((JLayeredPane)n.getParent()).add(anterior,0);
@@ -659,7 +678,7 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 		else 
 			cart2 = Integer.parseInt(carta2.getNumero());
 
-		if(cart2 < cart1 && carta1.getPalo().equals(carta2.getPalo()))
+		if(cart2 == cart1 - 1 && carta1.getPalo().equals(carta2.getPalo()))
 			return true;
 
 		return false;

@@ -35,8 +35,8 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 	private ArrayList<JLayeredPane> superiores = new ArrayList<JLayeredPane>();
 	private ArrayList<JLayeredPane> inferiores = new ArrayList<JLayeredPane>();
 
-	JLayeredPane sacadas;
-	
+	private JLayeredPane sacadas;
+
 	public static void main(String[] args) {
 		try {
 			javax.swing.UIManager.setLookAndFeel( "javax.swing.plaf.nimbus.NimbusLookAndFeel" );
@@ -330,18 +330,23 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 		});
 
 		JMenuItem item_cargar = new JMenuItem("Cargar... ");
-		JMenuItem item_guardar = new JMenuItem("Guardar...");
-		item_guardar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				guardar();
-			}
+		item_cargar.addActionListener(e -> {
+			cargar();
 		});
+
+		JMenuItem item_guardar = new JMenuItem("Guardar...");
+		item_guardar.addActionListener(e -> {
+			guardar();
+		});
+
 		JMenuItem item_guardarComo = new JMenuItem("Guardar como...");
+		item_guardarComo.addActionListener(e -> {
+			guardar_como();
+		});
+
 		JMenuItem salir = new JMenuItem("Salir");
-		salir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(1);
-			}
+		salir.addActionListener(e -> {
+			System.exit(1);
 		});
 
 		//Item Editar
@@ -400,7 +405,7 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 
 		JMenuItem item_ayuda =  new JMenuItem("Informacion");
 		menu_ayuda.add(item_ayuda);
-		item_guardar.addActionListener(new ActionListener() {
+		item_ayuda.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ayuda();
 			}
@@ -410,8 +415,105 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
+	private File partida = null;
+
 	public void guardar(){
-		//To-Do
+		if(partida == null) {
+			String name = new String();
+			JFileChooser fc = new JFileChooser();
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			name = JOptionPane.showInputDialog("Nombre del Archivo");
+
+			try{
+				if(fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION){
+					partida = new File(fc.getSelectedFile().getAbsolutePath() + "/"  + name + ".txt");
+					FileWriter fw =  new FileWriter(partida);
+
+					fw.write("Solitario clasico\n");
+
+					//Mazo
+					fw.write(baraja.toString());
+					fw.write("\n");
+
+					//Sacadas
+					for (int i = 0; i < sacadas.getComponentCount(); i++) {
+						fw.write( ((Carta)sacadas.getComponents()[i]).toString() + " ");
+					}
+					fw.write("\n");
+
+					//Pilas
+					for (JLayeredPane pane : inferiores) {
+						if(pane.getComponentCount()!=0)
+							for (int i = 0; i < pane.getComponentCount(); i++) {
+								fw.write( ((Carta)pane.getComponents()[i]).toString() + " ");
+							}
+						else
+							fw.write("*");
+						fw.write("\n");
+					} 
+
+					//Superiores
+					for (JLayeredPane pane : superiores) {
+						if(pane.getComponentCount()!=0)
+							for (int i = 0; i < pane.getComponentCount(); i++) {
+								fw.write( ((Carta)pane.getComponents()[i]).toString() + " ");
+							}
+						else
+							fw.write("*");
+						fw.write("\n");
+					}
+
+					fw.close();
+				}
+			}catch(Exception e){
+				JOptionPane.showMessageDialog(null,"Error guardando la partida.","Error",JOptionPane.ERROR_MESSAGE);
+			}
+		}else {
+			try {
+				FileWriter fw =  new FileWriter(partida);
+
+				fw.write("Solitario clasico\n");
+
+				//Mazo
+				fw.write(baraja.toString());
+				fw.write("\n");
+
+				//Sacadas
+				for (int i = 0; i < sacadas.getComponentCount(); i++) {
+					fw.write( ((Carta)sacadas.getComponents()[i]).toString() + " ");
+				}
+				fw.write("\n");
+
+				//Pilas
+				for (JLayeredPane pane : inferiores) {
+					if(pane.getComponentCount()!=0)
+						for (int i = 0; i < pane.getComponentCount(); i++) {
+							fw.write( ((Carta)pane.getComponents()[i]).toString() + " ");
+						}
+					else
+						fw.write("*");
+					fw.write("\n");
+				} 
+
+				//Superiores
+				for (JLayeredPane pane : superiores) {
+					if(pane.getComponentCount()!=0)
+						for (int i = 0; i < pane.getComponentCount(); i++) {
+							fw.write( ((Carta)pane.getComponents()[i]).toString() + " ");
+						}
+					else
+						fw.write("*");
+					fw.write("\n");
+				}
+
+				fw.close();
+			}catch(Exception e){
+				JOptionPane.showMessageDialog(null,"Error guardando la partida.","Error",JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	public void guardar_como(){
 		String name = new String();
 		JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -419,63 +521,121 @@ public class Frances extends JFrame implements ActionListener, MouseListener{
 
 		try{
 			if(fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION){
-				File aux = new File(fc.getSelectedFile().getAbsolutePath() + "/"  + name + ".txt");
-				FileWriter fw =  new FileWriter(aux);
+				partida = new File(fc.getSelectedFile().getAbsolutePath() + "/"  + name + ".txt");
+				FileWriter fw =  new FileWriter(partida);
 
-				fw.write("Solitario clasico");
-				fw.write("\n");
+				fw.write("Solitario clasico\n");
+
 				//Mazo
-				for (int j = 0; j < superiores.size(); j++) {
-					//fw.write(superiores.get(j).getComponent(j));
-
-				}
-				
+				fw.write(baraja.toString());
+				fw.write("\n");
 
 				//Sacadas
-				//fw.write("\n")
+				for (int i = 0; i < sacadas.getComponentCount(); i++) {
+					fw.write( ((Carta)sacadas.getComponents()[i]).toString() + " ");
+				}
+				fw.write("\n");
 
+				//Pilas
+				for (JLayeredPane pane : inferiores) {
+					if(pane.getComponentCount()!=0)
+						for (int i = 0; i < pane.getComponentCount(); i++) {
+							fw.write( ((Carta)pane.getComponents()[i]).toString() + " ");
+						}
+					else
+						fw.write("*");
+					fw.write("\n");
+				} 
+
+				//Superiores
+				for (JLayeredPane pane : superiores) {
+					if(pane.getComponentCount()!=0)
+						for (int i = 0; i < pane.getComponentCount(); i++) {
+							fw.write( ((Carta)pane.getComponents()[i]).toString() + " ");
+						}
+					else
+						fw.write("*");
+					fw.write("\n");
+				}
 
 				fw.close();
 			}
-		}catch(Exception ei){
-			ei.printStackTrace();
+		}catch(Exception e){
 			JOptionPane.showMessageDialog(null,"Error guardando la partida.","Error",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	public void cargar() {
-
-		JFileChooser fc = new JFileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "txt", "text");
-		fc.setFileFilter(filter);
-		File archivo;
-
-
-		try {
-			if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
-				archivo = fc.getSelectedFile();
-				FileReader fr;
-
-				fr = new FileReader(archivo.toString());
-
-				BufferedReader reader = new BufferedReader(fr);
-
-				int ancho = -1;
-				String linea;
-				ArrayList<int[]> lineas = new ArrayList<int[]>();
-				while((linea=reader.readLine())!=null) {
-
+		if(partida == null) {
+			JFileChooser fc = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "txt", "text");
+			fc.setFileFilter(filter);
+			try {
+				if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+					partida = fc.getSelectedFile();
+					FileReader fr = new FileReader(partida);
+					BufferedReader reader = new BufferedReader(fr);
+					String linea = new String();
+					int nLinea = 0;
+					while( (linea=reader.readLine()) != null ) {
+						String[] cartas;
+						switch(nLinea) {
+						case 1:
+							baraja.clear();
+							cartas = linea.split("\\s+");
+							for (int i = 0; i < cartas.length; i++) {
+								Carta nueva = new Carta( ""+cartas[i].charAt(0), ""+cartas[i].charAt(1) );
+								ImageIcon image = new ImageIcon(getClass().getResource("/imagen_francesa/" + cartas[i].charAt(0) + "_" + cartas[i].charAt(1) + ".JPG"));
+								nueva.setIcon(image);
+								baraja.addCarta(nueva);
+							}
+							System.out.println(baraja);
+							break;
+						case 2:
+							sacadas.removeAll();
+							cartas = linea.split("\\s+");
+							for (int i = 0; i < cartas.length; i++) {
+								Carta nueva = new Carta( ""+cartas[i].charAt(0), ""+cartas[i].charAt(1) );
+								ImageIcon image = new ImageIcon(getClass().getResource("/imagen_francesa/" + cartas[i].charAt(0) + "_" + cartas[i].charAt(1) + ".JPG"));
+								nueva.setIcon(image);
+								nueva.setBounds(15, 30, nueva.getWidth(), nueva.getHeight());
+								sacadas.add(nueva,0);
+								//TODO LISTENERS A LAS CARTAS NUEVAS
+							}
+							break;
+						case 3:
+							break;
+						case 4:
+							break;
+						case 5:
+							break;
+						case 6:
+							break;
+						case 7:
+							break;
+						case 8:
+							break;
+						case 9:
+							break;
+						case 10:
+							break;
+						case 11:
+							break;
+						case 12:
+							break;
+						case 13:
+							break;
+						default:
+							break;
+						}
+						nLinea++;
+					}
+					reader.close();
 				}
-
-				reader.close();
-
-
+			}catch(Exception event) {
+				JOptionPane.showMessageDialog(null,"No es una partida valida.","Error",JOptionPane.ERROR_MESSAGE);
 			}
-		}catch(Exception event) {
-			JOptionPane.showMessageDialog(null,"No es una partida valida.","Error",JOptionPane.ERROR_MESSAGE);
 		}
-
-
 	}
 
 	public void ayuda() {

@@ -29,8 +29,8 @@ public class Baraja {
 			 
 			for (int i = 0; i < francesa.length; i++) {
 				//System.out.Drintln("/imagen_francesa/" + francesa[i].charAt(0) + "_" + francesa[i].charAt(1) + ".JPG");
-				ImageIcon image = new ImageIcon(getClass().getResource("/imagen_francesa/" + francesa[i].charAt(0) + "_" + francesa[i].charAt(1) + ".JPG"));
 				Carta nueva = new Carta("" + francesa[i].charAt(0), "" + francesa[i].charAt(1));
+				ImageIcon image = new ImageIcon(getClass().getResource("/imagen_francesa/" + francesa[i].charAt(0) + "_" + francesa[i].charAt(1) + ".JPG"));
 				nueva.setIcon(image);
 				this.addCarta(nueva);
 			}
@@ -82,15 +82,18 @@ public class Baraja {
 	public Saltos getControladorEsp() {
 		return controladorEsp;
 	}
-
+	
+	public void clear() {
+		baraja.clear();
+	}
+	
 	@Override
 	public String toString() {
-		String salida = "Baraja [";
-		for (Carta carta : baraja) {
-			salida += carta.toString();
+		String salida = "";
+		for (int i = baraja.size()-1; i >= 0; i--) {
+			salida += baraja.get(i).toString() + " ";
 		}
-		salida += "]\n";
-		return salida;
+		return salida.trim();
 	}
 
 }

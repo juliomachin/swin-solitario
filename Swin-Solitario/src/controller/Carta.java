@@ -39,7 +39,7 @@ public class Carta extends JButton{
 	
 	@Override
 	public String toString() {
-		return  "[" + palo +""+ numero + "]";
+		return numero + palo;
 	}
 
 	public boolean isOculta() {

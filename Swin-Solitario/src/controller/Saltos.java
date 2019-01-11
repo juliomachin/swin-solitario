@@ -184,11 +184,22 @@ public class Saltos extends JFrame implements ActionListener {
 		setContentPane(bp);
 		setSize(1024,768);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+		Saltos ventana = this;
+		addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				if (JOptionPane.showConfirmDialog(ventana, "¿Quieres guardar la partida?", "Close Window?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+					guardar();
+				}
+				intento();
+				ventana.dispose();
+			}
+		});
 	}
 
 	private File estadistica = null;
 
-	@SuppressWarnings("resource")
 	private void estadistica() {
 		int intentos = 0, ganadas = 0;
 		if(estadistica == null) {
@@ -196,22 +207,21 @@ public class Saltos extends JFrame implements ActionListener {
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "txt", "text");
 			fc.setFileFilter(filter);
 			try {
-				if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+				if(fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 					estadistica = fc.getSelectedFile();
 					FileReader fr = new FileReader(estadistica);
 					BufferedReader reader = new BufferedReader(fr);
 					String linea = new String();
 					int nLinea = 0;
 					while( (linea=reader.readLine()) != null ) {
-						if(nLinea == 0) {
-							if(!linea.equals("Solitario saltos")) {
-								JOptionPane.showMessageDialog(this, "Estadisticas invalidas", "Estadisticas invalidas", JOptionPane.ERROR_MESSAGE);
-								return;
-							}	
-						}else if(nLinea == 1) {
-							intentos = Integer.parseInt(linea);
+						if(nLinea == 1) {
+							try {
+								intentos = Integer.parseInt(linea);
+							}catch(Exception e) {}
 						} else if(nLinea == 2) {
-							ganadas = Integer.parseInt(linea);
+							try {
+								ganadas = Integer.parseInt(linea);
+							}catch(Exception e) {}
 						}
 						nLinea++;
 					}
@@ -229,15 +239,14 @@ public class Saltos extends JFrame implements ActionListener {
 				String linea = new String();
 				int nLinea = 0;
 				while( (linea=reader.readLine()) != null ) {
-					if(nLinea == 0) {
-						if(!linea.equals("Solitario saltos")) {
-							JOptionPane.showMessageDialog(this, "Estadisticas invalidas", "Estadisticas invalidas", JOptionPane.ERROR_MESSAGE);
-							return;
-						}	
-					}else if(nLinea == 1) {
-						intentos = Integer.parseInt(linea);
+					if(nLinea == 1) {
+						try {
+							intentos = Integer.parseInt(linea);
+						}catch(Exception e) {}
 					} else if(nLinea == 2) {
-						ganadas = Integer.parseInt(linea);
+						try {
+							ganadas = Integer.parseInt(linea);
+						}catch(Exception e) {}
 					}
 					nLinea++;
 				}
@@ -254,7 +263,7 @@ public class Saltos extends JFrame implements ActionListener {
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "txt", "text");
 		fc.setFileFilter(filter);
 		try {
-			if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+			if(fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				estadistica = fc.getSelectedFile();
 			}
 		}catch(Exception event) {
@@ -272,7 +281,7 @@ public class Saltos extends JFrame implements ActionListener {
 			name = JOptionPane.showInputDialog("Nombre del Archivo");
 
 			try{
-				if(fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION){
+				if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
 					partida = new File(fc.getSelectedFile().getAbsolutePath() + "/"  + name + ".txt");
 					FileWriter fw =  new FileWriter(partida);
 
@@ -327,7 +336,7 @@ public class Saltos extends JFrame implements ActionListener {
 		name = JOptionPane.showInputDialog("Nombre del Archivo");
 
 		try{
-			if(fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION){
+			if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
 				partida = new File(fc.getSelectedFile().getAbsolutePath() + "/"  + name + ".txt");
 				FileWriter fw =  new FileWriter(partida);
 
@@ -358,7 +367,7 @@ public class Saltos extends JFrame implements ActionListener {
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "txt", "text");
 		fc.setFileFilter(filter);
 		try {
-			if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+			if(fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				partida = fc.getSelectedFile();
 				FileReader fr = new FileReader(partida);
 				BufferedReader reader = new BufferedReader(fr);
@@ -415,7 +424,8 @@ public class Saltos extends JFrame implements ActionListener {
 	}
 
 	public void ayuda() {
-		JOptionPane.showMessageDialog(null, "Explicacion", "Ayuda", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, "Deberas mover las cartas horizontalmente, hacia la izquierda, hay movimientos de distancia 1 y 3."
+				+ "\n" + "Los movimientos seran con cartas con el mismo numero o del mismo palo.", "Ayuda", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private Carta anterior = null;
@@ -451,7 +461,6 @@ public class Saltos extends JFrame implements ActionListener {
 		}
 	}
 
-	@SuppressWarnings("resource")
 	public void victory(Carta selected) {
 		if( ((JLayeredPane)selected.getParent()).getComponentCount() == 40 && baraja.size() == 0 ) {
 			if(estadistica != null) {
@@ -462,29 +471,27 @@ public class Saltos extends JFrame implements ActionListener {
 					String linea = new String();
 					int nLinea = 0;
 					while( (linea=reader.readLine()) != null ) {
-						if(nLinea == 0) {
-							if(!linea.equals("Solitario saltos")) {
-								JOptionPane.showMessageDialog(this, "Estadisticas invalidas", "Estadisticas invalidas", JOptionPane.ERROR_MESSAGE);
-								return;
-							}	
-						}else if(nLinea == 1) {
-							iSaltos = Integer.parseInt(linea);
+						if(nLinea == 1) {
+							try {
+								iSaltos = Integer.parseInt(linea);
+							}catch(Exception e) {}
 						} else if(nLinea == 2) {
-							vSaltos = Integer.parseInt(linea);
-						}else if(nLinea == 3) {
-							if(!linea.equals("Solitario clásico")) {
-								JOptionPane.showMessageDialog(this, "Estadisticas invalidas", "Estadisticas invalidas", JOptionPane.ERROR_MESSAGE);
-								return;
-							}	
+							try {
+								vSaltos = Integer.parseInt(linea);
+							}catch(Exception e) {}
 						}else if(nLinea == 4) {
-							iFrances = Integer.parseInt(linea);
+							try {
+								iFrances = Integer.parseInt(linea);
+							}catch(Exception e) {}
 						} else if(nLinea == 5) {
-							vFrances = Integer.parseInt(linea);
+							try{
+								vFrances = Integer.parseInt(linea);
+							}catch(Exception e) {}
 						}
 						nLinea++;
 					}
 					reader.close();
-					
+
 					FileWriter fw =  new FileWriter(estadistica);
 
 					fw.write("Solitario saltos\n");
@@ -494,7 +501,7 @@ public class Saltos extends JFrame implements ActionListener {
 					fw.write("Solitario clásico\n");
 					fw.write( (iFrances) +"\n");
 					fw.write( (vFrances) +"\n");
-					
+
 					fw.close();
 				}catch(Exception e) {
 					JOptionPane.showMessageDialog(null,"Error leyendo las estadisticas.","Error",JOptionPane.ERROR_MESSAGE);
@@ -502,6 +509,53 @@ public class Saltos extends JFrame implements ActionListener {
 			}
 			JOptionPane.showMessageDialog(this, "Has ganado!", "Victoria", JOptionPane.OK_OPTION);
 		}	
+	}
+
+	public void intento() {
+		if(estadistica != null) {
+			int iSaltos = 0, vSaltos = 0, iFrances = 0, vFrances = 0;
+			try {
+				FileReader fr = new FileReader(estadistica);
+				BufferedReader reader = new BufferedReader(fr);
+				String linea = new String();
+				int nLinea = 0;
+				while( (linea=reader.readLine()) != null ) {
+					if(nLinea == 1) {
+						try {
+							iSaltos = Integer.parseInt(linea);
+						}catch(Exception e) {}
+					} else if(nLinea == 2) {
+						try {
+							vSaltos = Integer.parseInt(linea);
+						}catch(Exception e) {}
+					}else if(nLinea == 4) {
+						try {
+							iFrances = Integer.parseInt(linea);
+						}catch(Exception e) {}
+					} else if(nLinea == 5) {
+						try {
+							vFrances = Integer.parseInt(linea);
+						}catch(Exception e) {}
+					}
+					nLinea++;
+				}
+				reader.close();
+
+				FileWriter fw =  new FileWriter(estadistica);
+
+				fw.write("Solitario saltos\n");
+				fw.write( (iSaltos+1) +"\n");
+				fw.write( (vSaltos) +"\n");
+
+				fw.write("Solitario clásico\n");
+				fw.write( (iFrances) +"\n");
+				fw.write( (vFrances) +"\n");
+
+				fw.close();
+			}catch(Exception e) {
+				JOptionPane.showMessageDialog(null,"Error leyendo las estadisticas.","Error",JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	private boolean emparejan(Carta carta1, Carta carta2) {
